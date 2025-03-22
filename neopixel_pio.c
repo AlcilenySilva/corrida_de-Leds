@@ -1,10 +1,11 @@
 #include "neopixel_pio.h"
-#include "ws2818b.pio.h"  // Biblioteca gerada pelo PIO
-
+#include "ws2818b.pio.h"
+#include <stdlib.h> // Para gerar números aleatórios
+#include <time.h>  
 // Buffer de pixels
 npLED_t leds[LED_COUNT];
 
-// Variáveis para controle da máquAina PIO
+// Variáveis para controle da máquina PIO
 PIO np_pio;
 uint sm;
 
@@ -47,35 +48,49 @@ void npWrite() {
     sleep_us(500);
 }
 
-void corridaEmLinhaReta() {
-    uint8_t cor1_R = 255, cor1_G = 0, cor1_B = 0;
-    uint8_t cor2_R = 0, cor2_G = 0, cor2_B = 255;
+void corridaCompetitiva() {
+    uint8_t cor1_R = 255, cor1_G = 0, cor1_B = 0;  // LED 1 (vermelho)
+    uint8_t cor2_R = 0, cor2_G = 0, cor2_B = 255;  // LED 2 (azul)
 
     uint led1_pos = 0;
     uint led2_pos = 1;
 
-    uint tempo_espera_ms = 500;  
+    srand(time(NULL)); // Inicializa a semente aleatória
 
-    for (uint i = 0; i < LED_COUNT; ++i) {
+    while (led1_pos < LED_COUNT - 1 && led2_pos < LED_COUNT - 1) {
         npClear();
         npSetLED(led1_pos, cor1_R, cor1_G, cor1_B);
         npSetLED(led2_pos, cor2_R, cor2_G, cor2_B);
         npWrite();
-        sleep_ms(tempo_espera_ms);
+        
+        // Define velocidade aleatória para cada LED
+        uint8_t velocidade1 = (rand() % 3) + 1; // Avança entre 1 e 3 LEDs
+        uint8_t velocidade2 = (rand() % 3) + 1; 
 
-     
-        led1_pos++;
-        led2_pos++;
-
-       
-        if (i % 2 == 1) {
+        // Alterna posições simulando ultrapassagens ocasionais
+        if (rand() % 5 == 0) {
             uint temp = led1_pos;
             led1_pos = led2_pos;
             led2_pos = temp;
         }
 
-       
-        if (led1_pos >= LED_COUNT) led1_pos = 0;
-        if (led2_pos >= LED_COUNT) led2_pos = 0;
+        led1_pos += velocidade1;
+        led2_pos += velocidade2;
+
+        // Evita ultrapassar os limites da fita de LEDs
+        if (led1_pos >= LED_COUNT) led1_pos = LED_COUNT - 1;
+        if (led2_pos >= LED_COUNT) led2_pos = LED_COUNT - 1;
+
+        sleep_ms(200); 
     }
+
+    // Determina o vencedor
+    npClear();
+    if (led1_pos >= LED_COUNT - 1) {
+        npSetLED(LED_COUNT - 1, cor1_R, cor1_G, cor1_B);
+    } else {
+        npSetLED(LED_COUNT - 1, cor2_R, cor2_G, cor2_B);
+    }
+    npWrite();
+    sleep_ms(1000); 
 }

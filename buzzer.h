@@ -6,14 +6,14 @@
 #include "hardware/pwm.h"
 
 
-// Define o pino do buzzer (verifique se é um pino PWM)
+// Define o pino do buzzer 
 #define BUZZER_PIN 21  
 
 
 // Estrutura para representar uma nota musical
 typedef struct {
-    int frequency; // Frequência da nota (Hz)
-    int duration;  // Duração da nota (ms)
+    int frequency; 
+    int duration;  
 } Note;
 
 
