@@ -1,6 +1,6 @@
 #include "neopixel_pio.h"
 #include "ws2818b.pio.h"
-#include <stdlib.h> // Para gerar números aleatórios
+#include <stdlib.h> 
 #include <time.h>  
 // Buffer de pixels
 npLED_t leds[LED_COUNT];
